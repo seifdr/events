@@ -1,0 +1,1 @@
+var form=document.getElementById("registrar"),input=form.querySelector("input");form.addEventListener("submit",function(e){return console.log(input.value),e.preventDefault()});

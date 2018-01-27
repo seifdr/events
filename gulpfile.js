@@ -12,6 +12,17 @@ var autoprefixer = require('gulp-autoprefixer');
 var watch        = require( 'gulp-watch' );
 var plumber      = require( 'gulp-plumber' );
 var stylish      = require('jshint-stylish');
+var typescript = require('gulp-tsc');
+
+//convert the ts to js
+gulp.task('compile', function(){
+  gulp.src(['ts/**/*.ts'])
+    .pipe(typescript())
+    .pipe(gulp.dest('js/'))
+    // .pipe(browserSync.reload({stream: true}))
+    .pipe( notify({ message: 'Compile task complete' }));
+});
+
 
 
   // Jshint outputs any kind of javascript problems you might have
@@ -28,15 +39,16 @@ gulp.task( 'jshint', function() {
 // and creates two versions: normal and minified.
 // It's dependent on the jshint task to succeed.
 gulp.task( 'scripts', ['jshint'], function() {
-    return gulp.src( './js/manifest.js' )
+    // return gulp.src( './js/manifest.js' )
+    return gulp.src('./js/**/*.js')
       .pipe( include() )
       .pipe( rename( { basename: 'scripts' } ) )
-      .pipe( gulp.dest( './js/dist' ) )
+      .pipe( gulp.dest( './js' ) )
       // Normal done, time to create the minified javascript (scripts.min.js)
       // remove the following 3 lines if you don't want it
       .pipe( uglify() )
       .pipe( rename( { suffix: '.min' } ) )
-      .pipe( gulp.dest( './js/dist' ) )
+      .pipe( gulp.dest( './js' ) )
       .pipe(browserSync.reload({stream: true}))
       .pipe( notify({ message: 'scripts task complete' }));
   } );
@@ -95,7 +107,7 @@ gulp.task('sass', function() {
         .pipe(plumber())
         .pipe(sass(options.sass).on('error', sass.logError))
         .pipe(autoprefixer())
-        .pipe(gulp.dest('./dist/css'))
+        .pipe(gulp.dest('./css'))
         .pipe(browserSync.reload({stream: true}))
         .pipe(notify({ title: 'Sass', message: 'sass task complete'  }));
 });
@@ -107,7 +119,7 @@ gulp.task('sass-min', function() {
         .pipe(sass(options.sassmin).on('error', sass.logError))
         .pipe(autoprefixer())
         .pipe(rename( { suffix: '.min' } ) )
-        .pipe(gulp.dest('./dist/css'))
+        .pipe(gulp.dest('./css'))
         .pipe(browserSync.reload({stream: true}))
         .pipe(notify({ title: 'Sass', message: 'sass-min task complete' }));
 });
@@ -116,10 +128,12 @@ gulp.task('sass-min', function() {
 // Start the livereload server and watch files for change
 gulp.task( 'watch', function() {
  
+  gulp.watch( [ './ts/**/*.ts' ], [ 'compile', 'scripts' ] );
+
   // don't listen to whole js folder, it'll create an infinite loop
   //gulp.watch( [ './js/**/*.js' ], [ 'scripts' ] );
 
-  gulp.watch( './js/**/*.js' ).on('change', browserSync.reload);
+ // gulp.watch( './js/*.js' ).on('change', browserSync.reload);
 
 //   gulp.watch( [ './js/**/*.js', '!./js/dist/*.js' ], [ 'scripts' ] )
  
