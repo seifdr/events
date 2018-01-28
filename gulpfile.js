@@ -14,14 +14,14 @@ var plumber      = require( 'gulp-plumber' );
 var stylish      = require('jshint-stylish');
 var typescript = require('gulp-tsc');
 
-//convert the ts to js
-gulp.task('compile', function(){
-  gulp.src(['ts/**/*.ts'])
-    .pipe(typescript())
-    .pipe(gulp.dest('js/'))
-    // .pipe(browserSync.reload({stream: true}))
-    .pipe( notify({ message: 'Compile task complete' }));
-});
+// //convert the ts to js
+// gulp.task('compile', function(){
+//   gulp.src(['ts/**/*.ts'])
+//     .pipe(typescript())
+//     .pipe(gulp.dest('js/'))
+//     // .pipe(browserSync.reload({stream: true}))
+//     .pipe( notify({ message: 'Compile task complete' }));
+// });
 
 
 
@@ -34,13 +34,16 @@ gulp.task( 'jshint', function() {
       .pipe( jshint.reporter( 'fail' ) );
   })
  
-
 // Concatenates all files that it finds in the manifest
 // and creates two versions: normal and minified.
 // It's dependent on the jshint task to succeed.
 gulp.task( 'scripts', ['jshint'], function() {
     // return gulp.src( './js/manifest.js' )
-    return gulp.src('./js/**/*.js')
+    // return gulp.src('./js/**/*.js')
+    gulp.src(['ts/**/*.ts'])
+      .pipe(typescript({
+        target: 'ES5'
+      }))
       .pipe( include() )
       .pipe( rename( { basename: 'scripts' } ) )
       .pipe( gulp.dest( './js' ) )
@@ -128,7 +131,7 @@ gulp.task('sass-min', function() {
 // Start the livereload server and watch files for change
 gulp.task( 'watch', function() {
  
-  gulp.watch( [ './ts/**/*.ts' ], [ 'compile', 'scripts' ] );
+  gulp.watch( [ './ts/**/*.ts' ], [ 'scripts' ] );
 
   // don't listen to whole js folder, it'll create an infinite loop
   //gulp.watch( [ './js/**/*.js' ], [ 'scripts' ] );
