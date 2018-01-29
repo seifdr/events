@@ -1,6 +1,41 @@
 var eForm1 = document.getElementById('registrar');
+var eMain = document.getElementsByClassName('main');
 var eInput1 = eForm1.querySelector('input');
 var eUl = document.getElementById('invitedList');
+//for filtering who has responded
+var eDiv = document.createElement('div');
+var filterLabel = document.createElement('label');
+var filterCheckbox = document.createElement('input');
+filterCheckbox.type = 'checkbox';
+filterLabel.textContent = "Hide those who haven't responded";
+//add label into div 
+eDiv.appendChild(filterLabel);
+//add checkbox in label
+eDiv.appendChild(filterCheckbox);
+//prepend div before UL
+eMain[0].insertBefore(eDiv, eUl);
+filterCheckbox.addEventListener('change', function (e) {
+    var isChecked = e.target.checked;
+    var lis = eUl.children;
+    if (isChecked) {
+        //loop through all list items using the children property 
+        for (var i = 0; i < lis.length; i++) {
+            var li = lis[i];
+            if (li.className == 'responded') {
+                li.style.display = '';
+            }
+            else {
+                li.style.display = 'none';
+            }
+        }
+    }
+    else {
+        for (var i = 0; i < lis.length; i++) {
+            var li = lis[i];
+            li.style.display = '';
+        }
+    }
+});
 function createLI(text) {
     var li = document.createElement('li');
     var eSpan = document.createElement('span');
@@ -67,7 +102,6 @@ eUl.addEventListener('click', function (e) {
             e.target.textContent = 'Save';
         }
         else if (e.target.textContent == 'Save') {
-            alert('hello');
             //save button
             //get text input 
             var spanInput = li.firstElementChild;

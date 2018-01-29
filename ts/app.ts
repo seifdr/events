@@ -1,6 +1,46 @@
 const eForm1 = document.getElementById('registrar');
+const eMain = document.getElementsByClassName('main');
 const eInput1 = eForm1.querySelector('input');
 const eUl    = document.getElementById('invitedList');
+
+//for filtering who has responded
+const eDiv = document.createElement('div');
+const filterLabel = document.createElement('label');
+const filterCheckbox = document.createElement('input');
+
+filterCheckbox.type = 'checkbox'
+filterLabel.textContent = "Hide those who haven't responded";
+
+//add label into div 
+eDiv.appendChild( filterLabel );
+
+//add checkbox in label
+eDiv.appendChild( filterCheckbox );
+
+//prepend div before UL
+eMain[0].insertBefore( eDiv, eUl );
+
+filterCheckbox.addEventListener('change', (e:any) => {
+    const isChecked = e.target.checked;
+    const lis = eUl.children;
+
+    if( isChecked ){
+        //loop through all list items using the children property 
+        for (let i = 0; i < lis.length; i++) {
+            let li:any = lis[i];
+            if( li.className == 'responded' ){
+                li.style.display = '';
+            } else {
+                li.style.display = 'none';
+            }
+        } 
+    } else {
+        for (let i = 0; i < lis.length; i++) {
+            let li:any = lis[i];   
+            li.style.display = '';
+        }
+    }
+});
 
 function createLI( text ){
     const li    = document.createElement('li');
@@ -82,7 +122,6 @@ eUl.addEventListener('click', (e:any) => {
             //change edit to save
             e.target.textContent = 'Save';
         } else if( e.target.textContent =='Save' ) {
-            alert('hello');
             //save button
             //get text input 
             const spanInput = li.firstElementChild;
